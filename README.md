@@ -75,6 +75,71 @@ Hostel_Management/
 - **Admin**: Log in to manage users, rooms, and allocations
 - **Student**: Register and view your room allocation
 
+## 🤖 AI Hostel Assistant
+
+An LLM-powered chat assistant embedded in the portal that lets users query hostel data using natural language.
+
+### Setup
+
+Add your Groq API key to `server/.env`:
+```env
+GROQ_API_KEY=your_key_here
+```
+Create an API key at [console.groq.com](https://console.groq.com/).
+
+### Features
+- **Floating chat widget** (bottom-right corner) — available on all authenticated pages
+- **Role-aware responses**: Students see only their own data; Admins see hostel-wide data
+- **Safety guardrails**: prompt-injection and data-leak attempts are detected and blocked
+- **FAQ fallback**: rule-based fallback answers are returned when the model is unavailable
+- **Confidence + source metadata**: each AI response includes confidence and source for transparency
+- **Verify-first UX**: frontend shows confidence/source cues to encourage user verification
+- **Audit trail**: detailed AI logs include confidence, source, extracted params, and safety flags
+- **Supported intents**:
+  | Intent | Description |
+  |---|---|
+  | `FIND_VACANT_ROOMS` | List available rooms (admin only) |
+  | `VIEW_ALLOCATION` | Check room allocation details |
+  | `PENDING_FEES` | View estimated outstanding rent |
+  | `MAINTENANCE_REQUEST` | Get guidance on raising a maintenance issue |
+  | `GENERAL_INFO` | Hostel policy and contact info |
+
+### Architecture
+
+```
+POST /api/ai/chat
+  ↓  auth middleware (JWT)
+   ↓  aiService.analyseSafety()    ← blocks unsafe/prompt-injection queries
+   ↓  aiService.detectIntent()     ← Groq model returns structured intent JSON
+  ↓  whitelist check              ← intent must be in ALLOWED_INTENTS
+  ↓  queryService.executeIntent() ← safe Mongoose queries, role-scoped
+   ↓  aiService.generateResponse() ← Groq — human-readable reply
+   ↓  aiService.getFaqFallback()   ← fallback path when AI fails
+   ↓  AiQueryLog.create()          ← audit log written to MongoDB
+   ↓  { reply, intent, confidence, source, params, safetyFlags }
+```
+
+### Security
+- **Prompt injection guard**: input sanitised and capped at 500 characters before reaching LLM
+- **Whitelist enforcement**: intent is validated both inside `aiService` and in the route handler
+- **Role scoping**: students are hard-scoped to their own `userId` in `queryService` (not by LLM)
+- **No raw query execution**: Mongoose models with explicit field selects are used exclusively
+- **Audit logging**: every query logged to `aiquerylogs` collection with response metadata for review
+- **Rate limiting**: 20 requests per user per 15-minute window
+
+### Project Structure (new files)
+```
+server/
+├── models/AiQueryLog.js       ← Audit log schema
+├── routes/ai.js               ← POST /api/ai/chat
+└── services/
+   ├── aiService.js           ← Groq integration, prompt templates, safety, fallback
+    └── queryService.js        ← Intent → safe MongoDB query mapper
+src/components/ai/
+├── AiChat.jsx                 ← Floating chat widget + AI metadata handling
+└── ChatMessage.jsx            ← Message bubble with intent/confidence/source display
+```
+
 ## Contributing
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Building2, Menu, X, LogOut, User, Settings } from 'lucide-react';
+import AiChat from '../ai/AiChat';
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -87,6 +88,8 @@ const Layout = ({ children }) => {
           </div>
         </main>
       </div>
+
+      <AiChat />
     </div>
   );
 };

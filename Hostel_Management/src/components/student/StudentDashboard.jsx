@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import { useAuth } from '../../contexts/AuthContext';
 import { Building, Users, Calendar, DollarSign, Phone, Mail, MapPin, Wifi, AirVent, Bed } from 'lucide-react';
 
@@ -17,7 +17,7 @@ const StudentDashboard = () => {
 
   const fetchAllocation = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/api/allocations/my-allocation');
+      const response = await api.get('/api/allocations/my-allocation');
       setAllocation(response.data);
     } catch (error) {
       if (error.response?.status !== 404) {
@@ -30,7 +30,7 @@ const StudentDashboard = () => {
 
   const fetchAvailableRooms = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/api/rooms?available=true&limit=50');
+      const response = await api.get('/api/rooms?available=true&limit=50');
       setAvailableRooms(response.data.rooms);
     } catch (error) {
       console.error('Error fetching available rooms:', error);

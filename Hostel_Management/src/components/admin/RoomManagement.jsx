@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import { Plus, Search, Edit, Building, Users, DollarSign, Wifi, AirVent, Bed } from 'lucide-react';
 
 const RoomManagement = () => {
@@ -33,7 +33,7 @@ const RoomManagement = () => {
       if (floorFilter) params.append('floor', floorFilter);
       params.append('limit', '100');
 
-      const response = await axios.get(`http://localhost:5001/api/rooms?${params}`);
+      const response = await api.get(`/api/rooms?${params}`);
       let filteredRooms = response.data.rooms;
 
       if (searchTerm) {
@@ -61,9 +61,9 @@ const RoomManagement = () => {
       };
 
       if (editingRoom) {
-        await axios.put(`http://localhost:5001/api/rooms/${editingRoom._id}`, roomData);
+        await api.put(`/api/rooms/${editingRoom._id}`, roomData);
       } else {
-        await axios.post('http://localhost:5001/api/rooms', roomData);
+        await api.post('/api/rooms', roomData);
       }
       
       fetchRooms();

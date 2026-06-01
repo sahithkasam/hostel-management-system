@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import { Plus, Search, Edit, UserCheck, Calendar, DollarSign } from 'lucide-react';
 
 const AllocationManagement = () => {
@@ -24,9 +24,9 @@ const AllocationManagement = () => {
   const fetchData = async () => {
     try {
       const [allocationsRes, studentsRes, roomsRes] = await Promise.all([
-        axios.get(`http://localhost:5001/api/allocations?${statusFilter ? `status=${statusFilter}` : ''}&limit=100`),
-        axios.get('http://localhost:5001/api/users?role=student&limit=1000'),
-        axios.get('http://localhost:5001/api/rooms?available=true&limit=1000')
+        api.get(`/api/allocations?${statusFilter ? `status=${statusFilter}` : ''}&limit=100`),
+        api.get('/api/users?role=student&limit=1000'),
+        api.get('/api/rooms?available=true&limit=1000')
       ]);
 
       setAllocations(allocationsRes.data.allocations);
@@ -42,7 +42,7 @@ const AllocationManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5001/api/allocations', formData);
+      await api.post('/api/allocations', formData);
       fetchData();
       resetForm();
     } catch (error) {
@@ -53,7 +53,7 @@ const AllocationManagement = () => {
 
   const handleStatusUpdate = async (allocationId, newStatus) => {
     try {
-      await axios.put(`http://localhost:5001/api/allocations/${allocationId}`, {
+      await api.put(`/api/allocations/${allocationId}`, {
         status: newStatus,
         endDate: newStatus === 'vacated' ? new Date().toISOString() : undefined
       });

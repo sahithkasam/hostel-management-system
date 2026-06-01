@@ -1,1 +1,26 @@
 hostel_management_explained.md
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+dist/
+build/
+
+# Env files
+.env
+.env.local
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/

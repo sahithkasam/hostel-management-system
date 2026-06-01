@@ -1,5 +1,7 @@
 # Hostel Management System
 
+🔗 **Live Demo**: [https://hostel-management-system-ruby-nine.vercel.app](https://hostel-management-system-ruby-nine.vercel.app)
+
 A full-stack web application for managing hostel allocations, rooms, and users. Built with React (frontend), Node.js/Express (backend), and MongoDB (database).
 
 ## Features

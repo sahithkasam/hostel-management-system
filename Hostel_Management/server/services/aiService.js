@@ -6,7 +6,7 @@
 const Groq = require('groq-sdk');
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-const AI_MODEL = 'llama-3.1-8b-instant';
+const AI_MODEL = 'openai/gpt-oss-20b';
 
 const PROMPT_INJECTION_PATTERNS = [
   /ignore (all|previous) instructions/i,
